@@ -73,4 +73,8 @@ Optional folder for managing infrastructure with IaC tools:
 ## 4. `scripts/` folder
 Contains helper scripts for automation:
 - Deployment scripts: Automate the deployment of ADF pipelines and Databricks notebooks.
-- CI/CD pipelines: Define workflows for GitHub Actions or Azure DevOps.f4230a8b-54a3-4f2b-bf91-9e4e6ba3320b
+- CI/CD pipelines: Define workflows for GitHub Actions or Azure DevOps.
+
+```shell
+az ad sp create-for-rbac --name "devops-adf-deployment" --role "Contributor" --scopes "/subscriptions/f4230a8b-54a3-4f2b-bf91-9e4e6ba3320b
+```

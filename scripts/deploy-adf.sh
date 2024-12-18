@@ -17,8 +17,35 @@ az login --service-principal \
 az account set --subscription "$AZURE_SUBSCRIPTION_ID"
 echo "Azure CLI Login Successful!"
 
+
 # Function to replace placeholders with environment variables in a file
 replace_placeholders() {
+    local input_file=$1
+    local temp_file=$(mktemp)
+    cp "$input_file" "$temp_file"
+
+    # Find all placeholders in the file
+    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
+
+    # Replace placeholders with corresponding environment variables
+    for placeholder in $PLACEHOLDERS; do
+        env_var_value="${!placeholder}"
+        if [ -z "$env_var_value" ]; then
+            echo "Error: Environment variable '$placeholder' is not set but required in $input_file."
+            exit 1  # Exit with an error if the environment variable is not defined
+        fi
+        echo "Replacing @@$placeholder@@ with $env_var_value in $input_file"
+        sed -i "s|@@$placeholder@@|$env_var_value|g" "$temp_file"
+    done
+
+    echo "$temp_file"  # Return the path to the temporary file
+}
+
+
+
+
+# Function to replace placeholders with environment variables in a file
+replace_placeholders_new() {
     local input_file=$1
     local temp_file=$(mktemp)
     cp "$input_file" "$temp_file"

@@ -7,7 +7,7 @@ pool:
 variables:
   - group: AZURE-CLI  # Link your Variable Group
   - name: RESOURCE_GROUP
-    value: 'rg-experian-demo-01.'
+    value: 'rg-experian-demo-01'
   - name: ADF_NAME
     value: 'adf-experian-demo-1'
   - name: ASSETS_DIR
@@ -71,3 +71,27 @@ stages:
               LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"  # Set in Azure DevOps as secret
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+  - stage: Deploy_ADF
+    displayName: 'Deploy Azure Data Factory Assets'
+    jobs:
+      - job: DeployADF
+        displayName: 'Run ADF Deployment Script'
+        pool:
+          name: 'Default'
+
+        steps:
+          - script: |
+              chmod +x ./scripts/deploy-adf.sh
+              ./scripts/deploy-adf.sh
+            displayName: 'Run deploy-adf.sh'
+            env:
+              RESOURCE_GROUP: $(RESOURCE_GROUP)
+              ADF_NAME: $(ADF_NAME)
+              ASSETS_DIR: $(ASSETS_DIR)
+              AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+              AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+              AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+              AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+              KEYVAULT_BASEURL: $(KEYVAULT_BASEURL)
+              DATABRICKS_URL: $(DATABRICKS_URL)
+              DATABRICKS_CLUSTER_ID: $(DATABRICKS_CLUSTER_ID)
