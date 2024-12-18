@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#!/bin/bash
-
 # Variables (passed as environment variables)
 RESOURCE_GROUP=${RESOURCE_GROUP:?RESOURCE_GROUP is not set}
 ADF_NAME=${ADF_NAME:?ADF_NAME is not set}
@@ -23,69 +21,52 @@ replace_placeholders() {
     local input_file=$1
     local temp_file=$(mktemp)
 
-    echo "Debug: Processing $input_file with temp file $temp_file"
-
-    # Copy the original file to the temp file
+    # Copy the input file to a temporary file
     cp "$input_file" "$temp_file"
 
-    # Read the entire JSON content
-    json_content=$(cat "$temp_file")
+    # Debug: Check file contents before replacement
+    echo "Debug: Input JSON file before placeholder replacement:" >&2
+    cat "$temp_file" >&2
 
-    # Loop through all placeholders
-    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
+    # Find and replace placeholders
+    PLACEHOLDERS=$(grep -oE '@@[A-Z0-9_]+@@' "$temp_file" | sort -u)
     for placeholder in $PLACEHOLDERS; do
-        env_var_value="${!placeholder}"
+        # Extract the variable name without @@
+        env_var_name=$(echo "$placeholder" | sed 's/^@@//; s/@@$//')
+
+        # Fetch the environment variable value
+        env_var_value="${!env_var_name}"
+
+        # Check if the environment variable exists
         if [ -z "$env_var_value" ]; then
-            echo "Error: Environment variable '$placeholder' is not set!"
+            echo "Error: Environment variable '$env_var_name' is not set!"
             exit 1
         fi
-        echo "Replacing @@$placeholder@@ with $env_var_value"
 
-        # Replace placeholders in the JSON safely
-        json_content=$(echo "$json_content" | jq --arg value "$env_var_value" \
-            --arg placeholder "@@$placeholder@@" 'gsub($placeholder; $value)')
+        # Debug: Show what is being replaced
+        echo "Replacing $placeholder with $env_var_value" >&2
+
+        # Replace placeholder with the environment variable value in the file
+        sed -i '' "s|$placeholder|$env_var_value|g" "$temp_file"
     done
 
-    # Write back the updated JSON content
-    echo "$json_content" > "$temp_file"
+    # Validate JSON structure
+    echo "Debug: JSON after replacement:">&2
+    cat "$temp_file">&2
 
-    # Validate the JSON structure
-    echo "Debug: Validating JSON structure..."
     if ! jq empty "$temp_file" > /dev/null 2>&1; then
         echo "Error: $temp_file is not valid JSON!"
-        cat "$temp_file"
+        #cat "$temp_file"
         exit 1
     fi
 
-    echo "Debug: Successfully processed $temp_file"
     echo "$temp_file"
 }
 
 
 
 
-# Function to replace placeholders with environment variables in a file
-replace_placeholders_new() {
-    local input_file=$1
-    local temp_file=$(mktemp)
-    cp "$input_file" "$temp_file"
 
-    # Find all placeholders in the file
-    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
-
-    # Replace placeholders with corresponding environment variables
-    for placeholder in $PLACEHOLDERS; do
-        env_var_value="${!placeholder}"
-        if [ -z "$env_var_value" ]; then
-            echo "Error: Environment variable '$placeholder' is not set but required in $input_file."
-            exit 1  # Exit with an error if the environment variable is not defined
-        fi
-        echo "Replacing @@$placeholder@@ with $env_var_value in $input_file"
-        sed -i "s|@@$placeholder@@|$env_var_value|g" "$temp_file"
-    done
-
-    echo "$temp_file"  # Return the path to the temporary file
-}
 
 echo "Starting deployment of Azure Data Factory assets..."
 
