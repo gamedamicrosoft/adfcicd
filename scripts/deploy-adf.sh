@@ -26,7 +26,6 @@ replace_placeholders() {
 
     echo "Debug: Processing $input_file with temp file $temp_file"
 
-    # Find all placeholders and replace them
     PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
     for placeholder in $PLACEHOLDERS; do
         env_var_value="${!placeholder}"
@@ -34,17 +33,19 @@ replace_placeholders() {
             echo "Error: Environment variable '$placeholder' is not set!"
             exit 1
         fi
-        echo "Replacing @@$placeholder@@ with $env_var_value"
-        sed -i'' "s|@@$placeholder@@|$env_var_value|g" "$temp_file"
+
+        escaped_value=$(printf '%s' "$env_var_value" | jq -aRs .)
+        sed -i'' "s|@@$placeholder@@|$escaped_value|g" "$temp_file"
     done
 
-    # Debug the file content
-    echo "Debug: Contents of $temp_file after replacement:"
-    cat "$temp_file"
+    # Clean up any extra whitespace or line breaks
+    tr -d '\r\n' < "$temp_file" > "$temp_file.cleaned"
+    mv "$temp_file.cleaned" "$temp_file"
 
-    # Validate JSON structure
+    # Validate the JSON
     if ! jq empty "$temp_file"; then
         echo "Error: $temp_file is not valid JSON!"
+        cat "$temp_file"
         exit 1
     fi
 
