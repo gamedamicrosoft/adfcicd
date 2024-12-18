@@ -1,0 +1,62 @@
+trigger:
+- main
+
+pool:
+  name: "Default"  # Replace "Default" with your self-hosted pool name
+  # DO NOT include vmImage
+
+variables:
+  RESOURCE_GROUP: 'resource_free'
+  ADF_NAME: 'abhijeet030789adf1'
+  ASSETS_DIR: '$(System.DefaultWorkingDirectory)/adf'
+  KEYVAULT_BASEURL: 'https://abhijeet030789keyvault.vault.azure.net/'
+  DATABRICKS_URL: 'adb-3006059123266207.7.azuredatabricks.net'
+  DATABRICKS_CLUSTER_ID: '1211-053747-ss7i3ehb'
+  DATABRICKS_WORKSPACE_DIR: "/repos/adf-databricks/notebooks"
+
+
+
+stages:
+  - stage: Deploy_Databricks_Notebooks
+    displayName: "Deploy Notebooks to Databricks"
+    jobs:
+      - job: DeployNotebooks
+        displayName: "Deploy Notebooks"
+        pool:
+          name: 'Default'
+
+        steps:
+          - script: |
+              #pip3 install databricks-cli
+              databricks workspace import-dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
+            displayName: "Run Databricks Deployment Script"
+            env:
+              LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
+              DATABRICKS_HOST: "https://$(DATABRICKS_URL)"  # Set in Azure DevOps as secret
+              #DATABRICKS_TOKEN is coming from secrets
+
+
+  - stage: Deploy_ADF
+    displayName: 'Deploy Azure Data Factory Assets'
+    jobs:
+      - job: DeployADF
+        displayName: 'Run ADF Deployment Script'
+        pool:
+          name: 'Default'
+
+        steps:
+          - script: |
+              chmod +x ./scripts/deploy-adf.sh
+              ./scripts/deploy-adf.sh
+            displayName: 'Run deploy-adf.sh'
+            env:
+              RESOURCE_GROUP: $(RESOURCE_GROUP)
+              ADF_NAME: $(ADF_NAME)
+              ASSETS_DIR: $(ASSETS_DIR)
+              AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
+              AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
+              AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+              AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+              KEYVAULT_BASEURL: $(KEYVAULT_BASEURL)
+              DATABRICKS_URL: $(DATABRICKS_URL)
+              DATABRICKS_CLUSTER_ID: $(DATABRICKS_CLUSTER_ID)
