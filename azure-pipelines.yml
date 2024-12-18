@@ -20,8 +20,6 @@ variables:
     value: '1211-053747-ss7i3ehb'
   - name: DATABRICKS_WORKSPACE_DIR
     value: "/repos/adf-databricks/notebooks"
-  - name: DATABRICKS_TOKEN
-    value: '$(DATABRICKS_TOKEN)'
 
 stages:
   - stage: Deploy_Databricks_Notebooks
