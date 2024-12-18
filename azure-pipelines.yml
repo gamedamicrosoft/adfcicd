@@ -14,9 +14,7 @@ variables:
   DATABRICKS_URL: 'adb-3006059123266207.7.azuredatabricks.net'
   DATABRICKS_CLUSTER_ID: '1211-053747-ss7i3ehb'
   DATABRICKS_WORKSPACE_DIR: "/repos/adf-databricks/notebooks"
-  DATABRICKS_TOKEN:'$(DATABRICKS_TOKEN)'
-
-
+  DATABRICKS_TOKEN: '$(DATABRICKS_TOKEN)'
 
 stages:
   - stage: Deploy_Databricks_Notebooks
