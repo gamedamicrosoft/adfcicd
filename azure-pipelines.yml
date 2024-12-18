@@ -6,10 +6,10 @@ pool:
   # DO NOT include vmImage
 
 variables:
-  RESOURCE_GROUP: 'resource_free'
-  ADF_NAME: 'abhijeet030789adf1'
+  RESOURCE_GROUP: 'rg-gameda'
+  ADF_NAME: 'gameda-adf-via-cicd'
   ASSETS_DIR: '$(System.DefaultWorkingDirectory)/adf'
-  KEYVAULT_BASEURL: 'https://abhijeet030789keyvault.vault.azure.net/'
+  KEYVAULT_BASEURL: 'https://gameda-kv1.vault.azure.net/'
   DATABRICKS_URL: 'adb-3006059123266207.7.azuredatabricks.net'
   DATABRICKS_CLUSTER_ID: '1211-053747-ss7i3ehb'
   DATABRICKS_WORKSPACE_DIR: "/repos/adf-databricks/notebooks"
