@@ -29,7 +29,7 @@ stages:
 
         steps:
           - script: |
-              #pip3 install databricks-cli
+              pip install databricks-cli
               databricks workspace import-dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
             displayName: "Run Databricks Deployment Script"
             env:
