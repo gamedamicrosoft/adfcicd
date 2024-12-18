@@ -7,15 +7,23 @@ pool:
   # DO NOT include vmImage
 
 variables:
-  - group: AZURE-CLI  # Link your Variable Group here
-  RESOURCE_GROUP: 'rg-experian-demo-01.'
-  ADF_NAME: 'adf-experian-demo-1'
-  ASSETS_DIR: '$(System.DefaultWorkingDirectory)/adf'
-  KEYVAULT_BASEURL: 'https://gameda-kv1.vault.azure.net/'
-  DATABRICKS_URL: 'adb-3006059123266207.7.azuredatabricks.net'
-  DATABRICKS_CLUSTER_ID: '1211-053747-ss7i3ehb'
-  DATABRICKS_WORKSPACE_DIR: "/repos/adf-databricks/notebooks"
-  DATABRICKS_TOKEN: '$(DATABRICKS_TOKEN)'
+  - group: AZURE-CLI  # Link your Variable Group
+  - name: RESOURCE_GROUP
+    value: 'rg-experian-demo-01.'
+  - name: ADF_NAME
+    value: 'adf-experian-demo-1'
+  - name: ASSETS_DIR
+    value: '$(System.DefaultWorkingDirectory)/adf'
+  - name: KEYVAULT_BASEURL
+    value: 'https://gameda-kv1.vault.azure.net/'
+  - name: DATABRICKS_URL
+    value: 'adb-3006059123266207.7.azuredatabricks.net'
+  - name: DATABRICKS_CLUSTER_ID
+    value: '1211-053747-ss7i3ehb'
+  - name: DATABRICKS_WORKSPACE_DIR
+    value: "/repos/adf-databricks/notebooks"
+  - name: DATABRICKS_TOKEN
+    value: '$(DATABRICKS_TOKEN)'
 
 stages:
   - stage: Deploy_Databricks_Notebooks
