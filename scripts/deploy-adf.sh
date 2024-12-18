@@ -24,21 +24,31 @@ replace_placeholders() {
     local temp_file=$(mktemp)
     cp "$input_file" "$temp_file"
 
-    # Find all placeholders in the file
-    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
+    echo "Debug: Processing $input_file with temp file $temp_file"
 
-    # Replace placeholders with corresponding environment variables
+    # Find all placeholders and replace them
+    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
     for placeholder in $PLACEHOLDERS; do
         env_var_value="${!placeholder}"
         if [ -z "$env_var_value" ]; then
-            echo "Error: Environment variable '$placeholder' is not set but required in $input_file."
-            exit 1  # Exit with an error if the environment variable is not defined
+            echo "Error: Environment variable '$placeholder' is not set!"
+            exit 1
         fi
-        echo "Replacing @@$placeholder@@ with $env_var_value in $input_file"
-        sed -i "s|@@$placeholder@@|$env_var_value|g" "$temp_file"
+        echo "Replacing @@$placeholder@@ with $env_var_value"
+        sed -i'' "s|@@$placeholder@@|$env_var_value|g" "$temp_file"
     done
 
-    echo "$temp_file"  # Return the path to the temporary file
+    # Debug the file content
+    echo "Debug: Contents of $temp_file after replacement:"
+    cat "$temp_file"
+
+    # Validate JSON structure
+    if ! jq empty "$temp_file"; then
+        echo "Error: $temp_file is not valid JSON!"
+        exit 1
+    fi
+
+    echo "$temp_file"
 }
 
 
@@ -74,6 +84,10 @@ echo "Deploying Linked Services..."
 for file in $ASSETS_DIR/linkedServices/*.json; do
     LINKED_SERVICE_NAME=$(basename "$file" .json)
     echo "Processing Linked Service: $LINKED_SERVICE_NAME"
+    if [ ! -f "$file" ]; then
+        echo "Error: File $file not found!"
+        exit 1
+    fi
 
     PROCESSED_FILE=$(replace_placeholders "$file")
     PROPERTIES=$(jq '.properties' "$PROCESSED_FILE")
