@@ -85,6 +85,16 @@ stages:
               printenv | grep -E 'RESOURCE_GROUP|ADF_NAME|ASSETS_DIR|KEYVAULT_BASEURL'
             displayName: "Debug Environment Variables"
           - script: |
+              echo "Debug: Checking environment variables..."
+              printenv | grep 'KEYVAULT_BASEURL'
+
+              echo "Debug: Listing files in linkedServices folder..."
+              ls -l $(System.DefaultWorkingDirectory)/adf/linkedServices
+
+              echo "Debug: Contents of a sample JSON file:"
+              cat $(System.DefaultWorkingDirectory)/adf/linkedServices/0_AzureKeyVault1.json
+            displayName: "Debug JSON and Environment Variables"
+          - script: |
               sudo apt-get update
               sudo apt-get install -y jq
               jq --version
