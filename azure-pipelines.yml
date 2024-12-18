@@ -52,7 +52,7 @@ stages:
               echo "token = $DATABRICKS_TOKEN" >> ~/.databrickscfg
               
               echo "Validating the .databrickscfg file contents (host only):"
-              grep "host" ~/.databrickscfg
+              cat  ~/.databrickscfg
             displayName: "Configure Databricks CLI"
             env:
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
