@@ -7,9 +7,12 @@ replace_placeholders() {
     # Copy the input file to a temporary file
     cp "$input_file" "$temp_file"
 
-    # Debug: Check file contents before replacement
-    echo "Debug: Input JSON file before placeholder replacement:" >&2
-    cat "$temp_file" >&2
+    # OS-specific sed command
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        SED_COMMAND="sed -i ''"
+    else
+        SED_COMMAND="sed -i"
+    fi
 
     # Find and replace placeholders
     PLACEHOLDERS=$(grep -oE '@@[A-Z0-9_]+@@' "$temp_file" | sort -u)
@@ -22,27 +25,21 @@ replace_placeholders() {
 
         # Check if the environment variable exists
         if [ -z "$env_var_value" ]; then
-            echo "Error: Environment variable '$env_var_name' is not set!"
+            echo "Error: Environment variable '$env_var_name' is not set!" >&2
             exit 1
         fi
 
-        # Debug: Show what is being replaced
-        echo "Replacing $placeholder with $env_var_value" >&2
-
-        # Replace placeholder with the environment variable value in the file
-        sed -i '' "s|$placeholder|$env_var_value|g" "$temp_file"
+        # Replace placeholder with environment variable
+        $SED_COMMAND "s|$placeholder|$env_var_value|g" "$temp_file"
     done
 
     # Validate JSON structure
-    echo "Debug: JSON after replacement:">&2
-    cat "$temp_file">&2
-
     if ! jq empty "$temp_file" > /dev/null 2>&1; then
-        echo "Error: $temp_file is not valid JSON!"
-        #cat "$temp_file"
+        echo "Error: $temp_file is not valid JSON!" >&2
         exit 1
     fi
 
+    # Return the temp file path
     echo "$temp_file"
 }
 
