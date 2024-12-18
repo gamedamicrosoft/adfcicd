@@ -37,7 +37,7 @@ stages:
               pip install databricks-cli
               databricks workspace -h
               echo "***************Now actual command **************"
-              databricks workspace import-dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
+              databricks workspace import_dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
             displayName: "Run Databricks Deployment Script"
             env:
               LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
