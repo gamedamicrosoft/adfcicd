@@ -46,14 +46,14 @@ stages:
               databricks workspace -h
               echo "------ BBB -----"
               export DATABRICKS_HOST=${DATABRICKS_HOST}
-              export DATABRICKS_TOKEN=${DATABRICKS_TOKEN1}
+              export DATABRICKS_TOKEN=${DATABRICKS_TOKEN}
               echo "DATABRICKS_TOKEN length: ${#DATABRICKS_TOKEN}"  # Print length instead of value for security
-              echo "DATABRICKS_TOKEN1 length: ${#DATABRICKS_TOKEN1}"  # Print length instead of value for security
-              echo "***************Now actual command ************** DATABRICKS_HOST= ${DATABRICKS_HOST},   DATABRICKS_TOKEN = ${DATABRICKS_TOKEN} , DATABRICKS_TOKEN1 = ${DATABRICKS_TOKEN1}  "
+              echo "ABCD length: ${#ABCD}"  # Print length instead of value for security
+              echo "***************Now actual command ************** DATABRICKS_HOST= ${DATABRICKS_HOST},   DATABRICKS_TOKEN = ${DATABRICKS_TOKEN} , ABCD = ${ABCD}  "
               databricks workspace import_dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
             displayName: "Run Databricks Deployment Script"
             env:
               LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"  # Set in Azure DevOps as secret
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-              DATABRICKS_TOKEN1: "ABCD"
+              ABCD: "ABCDEF"
