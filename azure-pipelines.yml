@@ -2,7 +2,8 @@ trigger:
 - main
 
 pool:
-  name: "Default"  # Replace "Default" with your self-hosted pool name
+  #name: "Default"  # Replace "Default" with your self-hosted pool name
+  vmImage: ubuntu-latest
   # DO NOT include vmImage
 
 variables:
@@ -23,7 +24,8 @@ stages:
       - job: DeployNotebooks
         displayName: "Deploy Notebooks"
         pool:
-          name: 'Default'
+          vmImage: ubuntu-latest
+          #name: 'Default'
 
         steps:
           - script: |
@@ -42,7 +44,8 @@ stages:
       - job: DeployADF
         displayName: 'Run ADF Deployment Script'
         pool:
-          name: 'Default'
+          vmImage: ubuntu-latest
+          #name: 'Default'
 
         steps:
           - script: |
