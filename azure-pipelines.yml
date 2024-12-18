@@ -49,24 +49,25 @@ stages:
               echo "host = $DATABRICKS_HOST" >> ~/.databrickscfg
               echo "token = $DATABRICKS_TOKEN" >> ~/.databrickscfg
               
-              echo "Validating the .databrickscfg file contents (host only):"
-              cat  ~/.databrickscfg
+              #echo "Validating the .databrickscfg file contents (host only):"
+              #cat  ~/.databrickscfg
             displayName: "Configure Databricks CLI"
             env:
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
 
-          - script: |
-              echo "Debugging Token Length:"
-              echo "Token length: ${#DATABRICKS_TOKEN}"
-            displayName: "Check Token Length"
-            env:
-              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+          #- script: |
+          #    echo "Debugging Token Length:"
+          #    echo "Token length: ${#DATABRICKS_TOKEN}"
+          #  displayName: "Check Token Length"
+          #  env:
+          #    DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
 
           - script: |
               echo "Testing Databricks CLI..."
-              databricks workspace list
-            displayName: "Test Databricks CLI"
+              databricks workspace import_dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
+            displayName: "Run Databricks Deployment Script"
             env:
-              DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
+              LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
+              DATABRICKS_HOST: "https://$(DATABRICKS_URL)"  # Set in Azure DevOps as secret
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
