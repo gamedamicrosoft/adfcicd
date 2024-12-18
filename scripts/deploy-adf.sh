@@ -25,13 +25,14 @@ replace_placeholders() {
 
     echo "Debug: Processing $input_file with temp file $temp_file"
 
-    # Read the JSON file
-    json_content=$(cat "$input_file")
+    # Copy the original file to the temp file
+    cp "$input_file" "$temp_file"
 
-    # Find placeholders in the JSON file
-    PLACEHOLDERS=$(echo "$json_content" | grep -oP '@@\K[A-Z0-9_]+(?=@@)' | sort -u)
+    # Read the entire JSON content
+    json_content=$(cat "$temp_file")
 
-    # Replace placeholders using jq for safety
+    # Loop through all placeholders
+    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
     for placeholder in $PLACEHOLDERS; do
         env_var_value="${!placeholder}"
         if [ -z "$env_var_value" ]; then
@@ -40,12 +41,12 @@ replace_placeholders() {
         fi
         echo "Replacing @@$placeholder@@ with $env_var_value"
 
-        # Escape the variable value for JSON
+        # Replace placeholders in the JSON safely
         json_content=$(echo "$json_content" | jq --arg value "$env_var_value" \
-            --arg placeholder "$placeholder" 'gsub("@@" + $placeholder + "@@"; $value)')
+            --arg placeholder "@@$placeholder@@" 'gsub($placeholder; $value)')
     done
 
-    # Write the processed JSON to a temporary file
+    # Write back the updated JSON content
     echo "$json_content" > "$temp_file"
 
     # Validate the JSON structure
