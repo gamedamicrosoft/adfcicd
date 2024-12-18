@@ -56,4 +56,3 @@ stages:
               LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"  # Set in Azure DevOps as secret
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-              ABCD: "ABCDEF"
