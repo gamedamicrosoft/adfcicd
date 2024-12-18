@@ -28,8 +28,15 @@ stages:
           #name: 'Default'
 
         steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.x'
+              addToPath: true
           - script: |
+              python -m pip install --upgrade pip
               pip install databricks-cli
+              databricks workspace -h
+              echo "***************Now actual command **************"
               databricks workspace import-dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
             displayName: "Run Databricks Deployment Script"
             env:
