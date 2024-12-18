@@ -77,7 +77,7 @@ stages:
       - job: DeployADF
         displayName: 'Run ADF Deployment Script'
         pool:
-          name: 'Default'
+          vmImage: ubuntu-latest
 
         steps:
           - script: |
