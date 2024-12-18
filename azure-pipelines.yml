@@ -9,7 +9,7 @@ variables:
   - name: RESOURCE_GROUP
     value: 'rg-experian-demo-01'
   - name: ADF_NAME
-    value: 'adf-experian-demo-1'
+    value: 'adf-experian-demo-01'
   - name: ASSETS_DIR
     value: '$(System.DefaultWorkingDirectory)/adf'
   - name: KEYVAULT_BASEURL
