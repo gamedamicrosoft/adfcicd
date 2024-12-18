@@ -15,7 +15,7 @@ variables:
   - name: KEYVAULT_BASEURL
     value: 'https://gameda-kv1.vault.azure.net/'
   - name: DATABRICKS_URL
-    value: 'adb-3006059123266207.7.azuredatabricks.net'
+    value: 'adb-5793926643470096.16.azuredatabricks.net'
   - name: DATABRICKS_CLUSTER_ID
     value: '1211-053747-ss7i3ehb'
   - name: DATABRICKS_WORKSPACE_DIR
