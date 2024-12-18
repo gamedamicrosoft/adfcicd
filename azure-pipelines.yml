@@ -47,8 +47,6 @@ stages:
               echo "------ BBB -----"
               export DATABRICKS_HOST=${DATABRICKS_HOST}
               export DATABRICKS_TOKEN=${DATABRICKS_TOKEN}
-              echo "DATABRICKS_TOKEN length: ${#DATABRICKS_TOKEN}"  # Print length instead of value for security
-              echo "ABCD length: ${#ABCD}"  # Print length instead of value for security
               echo "***************Now actual command ************** DATABRICKS_HOST= ${DATABRICKS_HOST},   DATABRICKS_TOKEN = ${DATABRICKS_TOKEN} , ABCD = ${ABCD}  "
               databricks workspace import_dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
             displayName: "Run Databricks Deployment Script"
