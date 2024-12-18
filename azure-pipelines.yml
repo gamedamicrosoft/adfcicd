@@ -1,10 +1,8 @@
 trigger:
-- main
+  - main
 
 pool:
-  #name: "Default"  # Replace "Default" with your self-hosted pool name
   vmImage: ubuntu-latest
-  # DO NOT include vmImage
 
 variables:
   - group: AZURE-CLI  # Link your Variable Group
@@ -33,16 +31,18 @@ stages:
         displayName: "Deploy Notebooks"
         pool:
           vmImage: ubuntu-latest
-          #name: 'Default'
 
         steps:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.x'
               addToPath: true
+            displayName: "Setup Python Environment"
+
           - script: |
               python -m pip install --upgrade pip
               pip install databricks-cli
+            displayName: "Install Databricks CLI"
 
           - script: |
               echo "Configuring Databricks CLI..."
@@ -50,7 +50,10 @@ stages:
               echo "[DEFAULT]" > ~/.databrickscfg
               echo "host = $DATABRICKS_HOST" >> ~/.databrickscfg
               echo "token = $DATABRICKS_TOKEN" >> ~/.databrickscfg
-            displayName: "Configure Databricks CLI"
+              
+              echo "Contents of .databrickscfg:"
+              cat ~/.databrickscfg
+            displayName: "Configure and Print Databricks CLI Configuration"
             env:
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
@@ -62,5 +65,3 @@ stages:
             env:
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
-
-
