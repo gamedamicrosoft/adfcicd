@@ -44,6 +44,8 @@ stages:
               python -m pip install --upgrade pip
               pip install databricks-cli
               databricks workspace -h
+              export DATABRICKS_HOST=$(DATABRICKS_HOST)
+              export DATABRICKS_TOKEN=$(DATABRICKS_TOKEN)
               echo "DATABRICKS_TOKEN length: ${#DATABRICKS_TOKEN}"  # Print length instead of value for security
               echo "DATABRICKS_TOKEN1 length: ${#DATABRICKS_TOKEN1}"  # Print length instead of value for security
               echo "***************Now actual command ************** DATABRICKS_HOST= ${DATABRICKS_HOST},   DATABRICKS_TOKEN = ${DATABRICKS_TOKEN} , DATABRICKS_TOKEN1 = ${DATABRICKS_TOKEN1}  "
