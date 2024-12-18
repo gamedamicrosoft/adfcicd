@@ -51,11 +51,18 @@ stages:
               echo "host = $DATABRICKS_HOST" >> ~/.databrickscfg
               echo "token = $DATABRICKS_TOKEN" >> ~/.databrickscfg
               
-              echo "Contents of .databrickscfg:"
-              cat ~/.databrickscfg
-            displayName: "Configure and Print Databricks CLI Configuration"
+              echo "Validating the .databrickscfg file contents (host only):"
+              grep "host" ~/.databrickscfg
+            displayName: "Configure Databricks CLI"
             env:
               DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+
+          - script: |
+              echo "Debugging Token Length:"
+              echo "Token length: ${#DATABRICKS_TOKEN}"
+            displayName: "Check Token Length"
+            env:
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
 
           - script: |
