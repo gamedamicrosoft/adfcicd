@@ -35,23 +35,21 @@ replace_placeholders() {
             exit 1
         fi
 
-        # Escape the environment variable for JSON compatibility
+        # Escape environment variable for JSON
         escaped_value=$(printf '%s' "$env_var_value" | jq -aRs . | sed 's/^"//' | sed 's/"$//')
         echo "Replacing @@$placeholder@@ with $escaped_value"
         sed -i'' "s|@@$placeholder@@|$escaped_value|g" "$temp_file"
     done
 
-    # Debug and validate the final JSON
-    echo "Debug: Contents of $temp_file after placeholder replacement:"
-    cat "$temp_file"
-
+    # Validate JSON structure
+    echo "Debug: Validating JSON file after replacement..."
     if ! jq empty "$temp_file" > /dev/null 2>&1; then
         echo "Error: $temp_file is not valid JSON!"
         cat "$temp_file"
         exit 1
     fi
 
-    echo "$temp_file"  # Return the path to the processed file
+    echo "$temp_file"  # Return the path to the valid temp file
 }
 
 
