@@ -22,34 +22,42 @@ echo "Azure CLI Login Successful!"
 replace_placeholders() {
     local input_file=$1
     local temp_file=$(mktemp)
-    cp "$input_file" "$temp_file"
 
     echo "Debug: Processing $input_file with temp file $temp_file"
 
-    # Find all placeholders and replace them safely
-    PLACEHOLDERS=$(grep -oP '@@\K[A-Z0-9_]+(?=@@)' "$temp_file" | sort -u)
+    # Read the JSON file
+    json_content=$(cat "$input_file")
+
+    # Find placeholders in the JSON file
+    PLACEHOLDERS=$(echo "$json_content" | grep -oP '@@\K[A-Z0-9_]+(?=@@)' | sort -u)
+
+    # Replace placeholders using jq for safety
     for placeholder in $PLACEHOLDERS; do
         env_var_value="${!placeholder}"
         if [ -z "$env_var_value" ]; then
             echo "Error: Environment variable '$placeholder' is not set!"
             exit 1
         fi
+        echo "Replacing @@$placeholder@@ with $env_var_value"
 
-        # Escape environment variable for JSON
-        escaped_value=$(printf '%s' "$env_var_value" | jq -aRs . | sed 's/^"//' | sed 's/"$//')
-        echo "Replacing @@$placeholder@@ with $escaped_value"
-        sed -i'' "s|@@$placeholder@@|$escaped_value|g" "$temp_file"
+        # Escape the variable value for JSON
+        json_content=$(echo "$json_content" | jq --arg value "$env_var_value" \
+            --arg placeholder "$placeholder" 'gsub("@@" + $placeholder + "@@"; $value)')
     done
 
-    # Validate JSON structure
-    echo "Debug: Validating JSON file after replacement..."
+    # Write the processed JSON to a temporary file
+    echo "$json_content" > "$temp_file"
+
+    # Validate the JSON structure
+    echo "Debug: Validating JSON structure..."
     if ! jq empty "$temp_file" > /dev/null 2>&1; then
         echo "Error: $temp_file is not valid JSON!"
         cat "$temp_file"
         exit 1
     fi
 
-    echo "$temp_file"  # Return the path to the valid temp file
+    echo "Debug: Successfully processed $temp_file"
+    echo "$temp_file"
 }
 
 
