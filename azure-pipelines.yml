@@ -43,14 +43,24 @@ stages:
           - script: |
               python -m pip install --upgrade pip
               pip install databricks-cli
-              databricks workspace -h
-              echo "------ BBB -----"
-              export DATABRICKS_HOST=${DATABRICKS_HOST}
-              export DATABRICKS_TOKEN=${DATABRICKS_TOKEN}
-              echo "*************** Now actual command ************** DATABRICKS_HOST= ${DATABRICKS_HOST},   DATABRICKS_TOKEN = ${DATABRICKS_TOKEN} , ABCD = ${ABCD}  "
-              databricks workspace import_dir "${LOCAL_NOTEBOOKS_DIR}" "${DATABRICKS_WORKSPACE_DIR}" --overwrite
-            displayName: "Run Databricks Deployment Script"
+
+          - script: |
+              echo "Configuring Databricks CLI..."
+              mkdir -p ~/.databricks
+              echo "[DEFAULT]" > ~/.databrickscfg
+              echo "host = $DATABRICKS_HOST" >> ~/.databrickscfg
+              echo "token = $DATABRICKS_TOKEN" >> ~/.databrickscfg
+            displayName: "Configure Databricks CLI"
             env:
-              LOCAL_NOTEBOOKS_DIR: "$(Build.SourcesDirectory)/databricks/notebooks"
-              DATABRICKS_HOST: "https://$(DATABRICKS_URL)"  # Set in Azure DevOps as secret
+              DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
               DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+
+          - script: |
+              echo "Testing Databricks CLI..."
+              databricks workspace list
+            displayName: "Test Databricks CLI"
+            env:
+              DATABRICKS_HOST: "https://$(DATABRICKS_URL)"
+              DATABRICKS_TOKEN: $(DATABRICKS_TOKEN)
+
+
