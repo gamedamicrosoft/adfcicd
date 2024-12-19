@@ -78,3 +78,7 @@ Contains helper scripts for automation:
 ```shell
 az ad sp create-for-rbac --name "devops-adf-deployment" --role "Contributor" --scopes "/subscriptions/f4230a8b-54a3-4f2b-bf91-9e4e6ba3320b
 ```
+
+```shell
+"storage_account_key": "@Microsoft.KeyVault(SecretUri=https://<key-vault-name>.vault.azure.net/secrets/<secret-name>/)"
+```
