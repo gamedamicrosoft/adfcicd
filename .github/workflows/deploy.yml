@@ -29,5 +29,5 @@ jobs:
 
         run: |
           echo "DATABRICKS_HOST= ${DATABRICKS_HOST}"
-          databricks workspace import-dir "$LOCAL_NOTEBOOKS_DIR" "$DATABRICKS_WORKSPACE_DIR" --overwrite
+          databricks workspace import_dir "$LOCAL_NOTEBOOKS_DIR" "$DATABRICKS_WORKSPACE_DIR" --overwrite
 
