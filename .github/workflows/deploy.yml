@@ -11,7 +11,13 @@ jobs:
     name: Deploy Notebooks to Databricks
     runs-on: ubuntu-latest # Use your self-hosted runner
     # Dynamically select environment based on branch
-    environment: ${{ github.ref_name == 'main' && 'dev' || 'qa' }}
+    environment:  ${{
+          github.ref_name == 'main' && 'dev' ||
+          github.ref_name == 'qa' && 'qa' ||
+          github.ref_name == 'preprod' && 'preprod' ||
+          github.ref_name == 'prod' && 'prod' ||
+          'none'
+        }}
 
     steps:
       - name: Checkout Repository
