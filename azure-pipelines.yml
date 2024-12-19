@@ -5,21 +5,11 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  - group: AZURE-CLI  # Link your Variable Group
-  - name: RESOURCE_GROUP
-    value: 'rg-experian-demo-01'
-  - name: ADF_NAME
-    value: 'adf-experian-demo-01'
-  - name: ASSETS_DIR
-    value: '$(System.DefaultWorkingDirectory)/adf'
-  - name: KEYVAULT_BASEURL
-    value: 'https://gameda-kv1.vault.azure.net/'
-  - name: DATABRICKS_URL
-    value: 'adb-5793926643470096.16.azuredatabricks.net'
-  - name: DATABRICKS_CLUSTER_ID
-    value: '1211-053747-ss7i3ehb'
-  - name: DATABRICKS_WORKSPACE_DIR
-    value: "/repos/adf-databricks/notebooks"
+  - ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+      - group: AZURE-CLI
+  - ${{ if eq(variables['Build.SourceBranchName'], 'qa') }}:
+      - group: AZURE-CLI-QA
+
 
 stages:
   - stage: Deploy_Databricks_Notebooks
@@ -82,7 +72,7 @@ stages:
         steps:
           - script: |
               echo "Environment Variables:"
-              printenv | grep -E 'RESOURCE_GROUP|ADF_NAME|ASSETS_DIR|KEYVAULT_BASEURL'
+              printenv | grep -E 'RESOURCE_GROUP|ADF_NAME|KEYVAULT_BASEURL'
             displayName: "Debug Environment Variables"
           - script: |
               echo "Debug: Checking environment variables..."
@@ -116,7 +106,7 @@ stages:
             env:
               RESOURCE_GROUP: $(RESOURCE_GROUP)
               ADF_NAME: $(ADF_NAME)
-              ASSETS_DIR: $(ASSETS_DIR)
+              ASSETS_DIR: '$(System.DefaultWorkingDirectory)/adf'
               AZURE_CLIENT_ID: $(AZURE_CLIENT_ID)
               AZURE_CLIENT_SECRET: $(AZURE_CLIENT_SECRET)
               AZURE_TENANT_ID: $(AZURE_TENANT_ID)
