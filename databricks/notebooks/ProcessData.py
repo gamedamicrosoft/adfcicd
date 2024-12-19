@@ -1,7 +1,7 @@
 # Databricks notebook source
 
 # Retrieve storage account key from parameters
-storage_account_key = dbutils.widgets.get("storage_account_key")
+storage_account_key = dbutils.secrets.get(scope="gameda-kv1", key="storage-account-key")
 spark.conf.set("fs.azure.account.key.gamedacicd19dec.blob.core.windows.net", storage_account_key)
 # Load the CSV file from Azure Blob Storage
 df = spark.read.csv("wasbs://container1@gamedacicd19dec.blob.core.windows.net/dir1/sample_adf_data.csv", header=True, inferSchema=True)

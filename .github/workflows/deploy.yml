@@ -31,3 +31,43 @@ jobs:
           echo "DATABRICKS_HOST= ${DATABRICKS_HOST}"
           databricks workspace import_dir "$LOCAL_NOTEBOOKS_DIR" "$DATABRICKS_WORKSPACE_DIR" --overwrite
 
+  deploy-adf-assets:
+    name: Deploy Azure Data Factory Assets
+    runs-on: ubuntu-latest # Use your self-hosted runner
+    needs: deploy-databricks-notebooks
+    environment: ${{ github.ref_name == 'main' && 'dev' || 'qa' }}
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Debug Environment Variables
+      - name: Debug Environment Variables
+        run: |
+          echo "Environment Variables:"
+          printenv | grep -E 'RESOURCE_GROUP|ADF_NAME|KEYVAULT_BASEURL'
+
+      # Install jq for JSON processing
+      - name: Install and Verify jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          jq --version
+
+      # Run deploy-adf.sh script
+      - name: Run deploy-adf.sh
+        run: |
+          chmod +x ./scripts/deploy-adf.sh
+          ./scripts/deploy-adf.sh
+        env:
+          RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP }}
+          ADF_NAME: ${{ vars.ADF_NAME }}
+          ASSETS_DIR: $GITHUB_WORKSPACE/adf
+          AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+          AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          KEYVAULT_BASEURL: ${{ vars.KEYVAULT_BASEURL }}
+          DATABRICKS_URL: ${{ vars.DATABRICKS_URL }}
+          DATABRICKS_CLUSTER_ID: ${{ vars.DATABRICKS_CLUSTER_ID }}
