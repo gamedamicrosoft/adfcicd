@@ -42,12 +42,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Debug Environment Variables
-      - name: Debug Environment Variables
-        run: |
-          echo "Environment Variables:"
-          printenv | grep -E 'RESOURCE_GROUP|ADF_NAME|KEYVAULT_BASEURL'
-
       # Install jq for JSON processing
       - name: Install and Verify jq
         run: |
