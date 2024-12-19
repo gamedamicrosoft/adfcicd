@@ -57,7 +57,7 @@ jobs:
         env:
           RESOURCE_GROUP: ${{ vars.RESOURCE_GROUP }}
           ADF_NAME: ${{ vars.ADF_NAME }}
-          ASSETS_DIR: $GITHUB_WORKSPACE/adf
+          ASSETS_DIR: ${{ github.workspace }}/adf
           AZURE_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
