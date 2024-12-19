@@ -10,19 +10,12 @@ jobs:
   deploy-databricks-notebooks:
     name: Deploy Notebooks to Databricks
     runs-on: ubuntu-latest # Use your self-hosted runner
+    # Dynamically select environment based on branch
+    environment: ${{ github.ref_name == 'main' && 'dev' || 'qa' }}
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      # Conditional loading of environments based on branch
-      - name: Set environment
-        id: set-env
-        run: |
-          if [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "env_name=dev" >> $GITHUB_ENV
-          elif [[ "${{ github.ref_name }}" == "qa" ]]; then
-            echo "env_name=qa" >> $GITHUB_ENV
-          fi
 
       - name: Install Databricks CLI
         run: pip install databricks-cli
