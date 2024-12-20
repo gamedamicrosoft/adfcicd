@@ -184,36 +184,71 @@ az datafactory pipeline create     --resource-group "$RESOURCE_GROUP"     --fact
 
 The table below summarizes all the environment variables used in the pipelines, their descriptions, sources, and usage.
 
-| **Environment Variable**    | **Description**                                              | **Source**                                                                 | **How to Fetch/Set**                                                                                       | **Usage**                                                                                       |
-|-----------------------------|----------------------------------------------------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
-| **`AZURE_CLIENT_ID`**       | Client ID of the Azure Service Principal.               | Secret in Azure Pipelines/GitHub Actions.                                | Store in Azure DevOps variable group or GitHub repository secrets.                                        | Used for authentication in `az login`.                                                        |
-| **`AZURE_CLIENT_SECRET`**   | Secret of the Azure Service Principal.                 | Secret in Azure Pipelines/GitHub Actions.                                | Store in Azure DevOps variable group or GitHub repository secrets.                                        | Used for authentication in `az login`.                                                        |
-| **`AZURE_TENANT_ID`**       | Azure Active Directory tenant ID.                      | Secret in Azure Pipelines/GitHub Actions.                                | Run `az account show --query tenantId -o tsv`.                                                            | Used in `az login` to specify tenant.                                                          |
-| **`AZURE_SUBSCRIPTION_ID`** | Azure subscription ID for deployment.                  | Secret in Azure Pipelines/GitHub Actions.                                | Run `az account show --query id -o tsv`.                                                                  | Used to set the subscription for deployment.                                                  |
-| **`RESOURCE_GROUP`**        | Name of the Azure resource group for deployment.       | Pipeline variable or GitHub repository variable.                        | Define in variable group or repository settings.                                                          | Used in all `az datafactory` commands.                                                        |
-| **`ADF_NAME`**              | Name of the Azure Data Factory instance.               | Pipeline variable or GitHub repository variable.                        | Define in variable group or repository settings.                                                          | Used in ADF deployment commands.                                                              |
-| **`KEYVAULT_BASEURL`**      | URL of the Azure Key Vault.                             | Secret in Azure Pipelines/GitHub Actions.                                | Define in variable group or repository settings.                                                          | Passed to ADF scripts for accessing secrets.                                                  |
-| **`DATABRICKS_URL`**        | Host URL of the Databricks workspace.                  | Secret in Azure Pipelines/GitHub Actions.                                | Use the Databricks workspace URL (e.g., `https://<region>.azuredatabricks.net`).                           | Configures `~/.databrickscfg` for CLI commands.                                               |
-| **`DATABRICKS_TOKEN`**      | Personal access token for Databricks.                  | Secret in Azure Pipelines/GitHub Actions.                                | Generate from Databricks UI under `User Settings > Access Tokens`.                                        | Used for authenticating CLI commands.                                                         |
-| **`DATABRICKS_WORKSPACE_DIR`** | Target directory in Databricks workspace for notebooks. | Pipeline variable or GitHub repository variable. | Define in variable group or repository settings. | Specifies where the notebooks will be deployed. |
-
 ---
-<table>
-  <tr>
-    <th>Environment Variable</th>
-    <th>Description</th>
-    <th colspan="2">Value Source</th>
-  </tr>
-  <tr>
-    <td>AZURE_CLIENT_ID</td>
-    <td>Azure Client ID</td>
-    <td colspan="2">Azure Key Vault Secret</td>
-  </tr>
-  <tr>
-    <td>AZURE_CLIENT_SECRET</td>
-    <td>Azure Client Secret</td>
-    <td colspan="2">Azure Key Vault Secret</td>
-  </tr>
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Environment Variable</th>
+      <th>Description</th>
+      <th>Value Source</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="4">AZURE CLI related variables which will be used ADF deployment <code>az datafactory</code> commands</td>
+      <td>AZURE_CLIENT_ID</td>
+      <td>Client ID of the Azure Service Principal.</td>
+      <td rowspan="4"><code>az ad sp create-for-rbac --name "devops-adf-deployment" --role "Contributor" --scopes "/subscriptions/$subscription-id</code></td>
+    </tr>
+    <tr>
+      <td>AZURE_CLIENT_SECRET</td>
+      <td>Secret of the Azure Service Principal.</td>
+    </tr>
+    <tr>
+      <td>AZURE_TENANT_ID</td>
+      <td>Azure Active Directory tenant ID.</td>
+    </tr>
+    <tr>
+      <td>AZURE_SUBSCRIPTION_ID</td>
+      <td>Azure subscription ID for deployment.</td>
+    </tr>
+    <tr>
+      <td rowspan="3">Databricks Deployment Related</td>
+      <td>DATABRICKS_TOKEN</td>
+      <td>Personal access token for Databricks.</td>
+      <td>Generate from Databricks UI under User Settings > Access Tokens.</td>
+    </tr>
+    <tr>
+      <td>DATABRICKS_URL</td>
+      <td>Host URL of the Databricks workspace. (without https://)</td>
+      <td>Use the Databricks workspace URL (e.g.,<code>adb-XXXXXX.X.azuredatabricks.net</code>).</td>
+    </tr>
+    <tr>
+      <td>DATABRICKS_CLUSTER_ID</td>
+      <td>ID of the Databricks cluster used for execution.</td>
+      <td>Fetched from the Databricks UI under <code>Clusters > Cluster Details</code>.</td>
+    </tr>
+    <tr>
+      <td rowspan="4">ADF deployment related</td>
+      <td>RESOURCE_GROUP</td>
+      <td>Azure Resource Group</td>
+    </tr>
+    <tr>
+      <td>ADF_NAME</td>
+      <td>Azure Data Factory Name</td>
+    </tr>
+    <tr>
+      <td>ASSETS_DIR</td>
+      <td>Directory for ADF JSON Files</td>
+      <td>Pipeline Default</td>
+    </tr>
+    <tr>
+      <td>KEYVAULT_BASEURL</td>
+      <td>URL of the Azure Key Vault used for secrets management. eg. <code>https://XXXXXX.vault.azure.net/</code></td>
+      <td>Defined as a variable or fetched from Azure Key Vault during the pipeline execution.</td>
+    </tr>
+  </tbody>
 </table>
 
 ## Conclusion
