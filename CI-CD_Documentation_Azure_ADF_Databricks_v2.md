@@ -197,6 +197,7 @@ The table below summarizes all the environment variables used in the pipelines, 
 | **`DATABRICKS_TOKEN`**      | Personal access token for Databricks.                  | Secret in Azure Pipelines/GitHub Actions.                                | Generate from Databricks UI under `User Settings > Access Tokens`.                                        | Used for authenticating CLI commands.                                                         |
 | **`DATABRICKS_WORKSPACE_DIR`** | Target directory in Databricks workspace for notebooks. | Pipeline variable or GitHub repository variable. | Define in variable group or repository settings. | Specifies where the notebooks will be deployed. |
 
+---
 
 ## Conclusion
 
