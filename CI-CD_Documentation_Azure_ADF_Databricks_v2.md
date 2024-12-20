@@ -198,6 +198,24 @@ The table below summarizes all the environment variables used in the pipelines, 
 | **`DATABRICKS_WORKSPACE_DIR`** | Target directory in Databricks workspace for notebooks. | Pipeline variable or GitHub repository variable. | Define in variable group or repository settings. | Specifies where the notebooks will be deployed. |
 
 ---
+| Environment Variable | Description          | Value Source          |
+|-----------------------|----------------------|-----------------------|
+| AZURE_CLIENT_ID       | Azure Client ID      | Azure Key Vault Secret|
+| AZURE_CLIENT_SECRET   | Azure Client Secret  | Azure Key Vault Secret|
+
+<!-- Use HTML to merge cells -->
+<table>
+  <tr>
+    <th>Environment Variable</th>
+    <th>Description</th>
+    <th colspan="2">Value Source</th>
+  </tr>
+  <tr>
+    <td>AZURE_CLIENT_ID</td>
+    <td>Azure Client ID</td>
+    <td colspan="2">Azure Key Vault Secret</td>
+  </tr>
+</table>
 
 ## Conclusion
 
