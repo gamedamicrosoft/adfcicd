@@ -180,6 +180,24 @@ az datafactory pipeline create     --resource-group "$RESOURCE_GROUP"     --fact
 
 ---
 
+## Environment Variables
+
+The table below summarizes all the environment variables used in the pipelines, their descriptions, sources, and usage.
+
+| **Environment Variable**    | **Description**                                              | **Source**                                                                 | **How to Fetch/Set**                                                                                       | **Usage**                                                                                       |
+|-----------------------------|----------------------------------------------------------|---------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|
+| **`AZURE_CLIENT_ID`**       | Client ID of the Azure Service Principal.               | Secret in Azure Pipelines/GitHub Actions.                                | Store in Azure DevOps variable group or GitHub repository secrets.                                        | Used for authentication in `az login`.                                                        |
+| **`AZURE_CLIENT_SECRET`**   | Secret of the Azure Service Principal.                 | Secret in Azure Pipelines/GitHub Actions.                                | Store in Azure DevOps variable group or GitHub repository secrets.                                        | Used for authentication in `az login`.                                                        |
+| **`AZURE_TENANT_ID`**       | Azure Active Directory tenant ID.                      | Secret in Azure Pipelines/GitHub Actions.                                | Run `az account show --query tenantId -o tsv`.                                                            | Used in `az login` to specify tenant.                                                          |
+| **`AZURE_SUBSCRIPTION_ID`** | Azure subscription ID for deployment.                  | Secret in Azure Pipelines/GitHub Actions.                                | Run `az account show --query id -o tsv`.                                                                  | Used to set the subscription for deployment.                                                  |
+| **`RESOURCE_GROUP`**        | Name of the Azure resource group for deployment.       | Pipeline variable or GitHub repository variable.                        | Define in variable group or repository settings.                                                          | Used in all `az datafactory` commands.                                                        |
+| **`ADF_NAME`**              | Name of the Azure Data Factory instance.               | Pipeline variable or GitHub repository variable.                        | Define in variable group or repository settings.                                                          | Used in ADF deployment commands.                                                              |
+| **`KEYVAULT_BASEURL`**      | URL of the Azure Key Vault.                             | Secret in Azure Pipelines/GitHub Actions.                                | Define in variable group or repository settings.                                                          | Passed to ADF scripts for accessing secrets.                                                  |
+| **`DATABRICKS_URL`**        | Host URL of the Databricks workspace.                  | Secret in Azure Pipelines/GitHub Actions.                                | Use the Databricks workspace URL (e.g., `https://<region>.azuredatabricks.net`).                           | Configures `~/.databrickscfg` for CLI commands.                                               |
+| **`DATABRICKS_TOKEN`**      | Personal access token for Databricks.                  | Secret in Azure Pipelines/GitHub Actions.                                | Generate from Databricks UI under `User Settings > Access Tokens`.                                        | Used for authenticating CLI commands.                                                         |
+| **`DATABRICKS_WORKSPACE_DIR`** | Target directory in Databricks workspace for notebooks. | Pipeline variable or GitHub repository variable. | Define in variable group or repository settings. | Specifies where the notebooks will be deployed. |
+
+
 ## Conclusion
 
 This CI/CD process ensures consistent and secure deployments to Azure Data Factory and Databricks across environments. It leverages Azure Pipelines and GitHub Actions for automation, making the process robust and scalable.
